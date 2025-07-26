@@ -164,6 +164,19 @@ const Dashboard = () => {
     }
   };
 
+  if (loading || !dashboardData) {
+    return (
+      <div className={`dashboard ${currentTheme} ${isHighContrast ? 'high-contrast' : ''}`}>
+        <div className="dashboard-container">
+          <Header currentPage={currentPage} onPageChange={setCurrentPage} />
+          <div className="dashboard-content">
+            <div className="loading-spinner">Loading dashboard...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`dashboard ${currentTheme} ${isHighContrast ? 'high-contrast' : ''}`}>
       <div className="dashboard-container">
