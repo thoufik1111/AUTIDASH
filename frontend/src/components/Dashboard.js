@@ -274,19 +274,26 @@ const Dashboard = () => {
             <div className="page">
               <div className="tiles-grid">
                 <MapTile 
-                  map={dashboardData.map} 
+                  map={dashboardData.map_data} 
                   onClick={() => handleTileClick('map')} 
                 />
                 <CallTile 
-                  callLog={dashboardData.callLog} 
+                  callLog={dashboardData.call_log.entries} 
                   onClick={() => handleTileClick('call')} 
                 />
                 <SOSTile 
-                  emergency={dashboardData.emergency} 
+                  emergency={{
+                    ...dashboardData.emergency,
+                    isActive: dashboardData.emergency.is_active
+                  }} 
                   onClick={() => handleTileClick('sos')} 
                 />
                 <MediaTile 
-                  media={dashboardData.media} 
+                  media={{
+                    ...dashboardData.media,
+                    currentSource: dashboardData.media.current_source,
+                    isLoading: dashboardData.media.is_loading
+                  }} 
                   onClick={() => handleTileClick('media')} 
                 />
               </div>
