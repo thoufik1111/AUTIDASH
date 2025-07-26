@@ -1,0 +1,265 @@
+/* DriveAssist Dashboard Styles */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
+:root {
+  /* Light Blue Theme */
+  --bg-color-light-blue: #f0f7ff;
+  --tile-bg-light-blue: rgba(255, 255, 255, 0.7);
+  --tile-border-light-blue: rgba(146, 173, 201, 0.3);
+  --text-primary-light-blue: #1e3a8a;
+  --text-secondary-light-blue: #60a5fa;
+  --header-bg-light-blue: #e0f2fe;
+  --main-bg-light-blue: #dbeafe;
+
+  /* Light Green Theme */
+  --bg-color-light-green: #f0fff4;
+  --tile-bg-light-green: rgba(255, 255, 255, 0.7);
+  --tile-border-light-green: rgba(146, 201, 168, 0.3);
+  --text-primary-light-green: #065f46;
+  --text-secondary-light-green: #34d399;
+  --header-bg-light-green: #d1fae5;
+  --main-bg-light-green: #d1fae5;
+
+  /* Light Lavender Theme */
+  --bg-color-light-lavender: #f5f3ff;
+  --tile-bg-light-lavender: rgba(255, 255, 255, 0.7);
+  --tile-border-light-lavender: rgba(173, 146, 201, 0.3);
+  --text-primary-light-lavender: #5b21b6;
+  --text-secondary-light-lavender: #a78bfa;
+  --header-bg-light-lavender: #ede9fe;
+  --main-bg-light-lavender: #e0e7ff;
+
+  /* High Contrast */
+  --bg-color-hc: #000000;
+  --tile-bg-hc: #1c1c1e;
+  --tile-border-hc: #444446;
+  --text-primary-hc: #ffffff;
+  --text-secondary-hc: #e5e5ea;
+  --header-bg-hc: #1c1c1e;
+  --main-bg-hc: #000000;
+
+  /* Accent Colors */
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --accent-purple: #8b5cf6;
+  --accent-red: #ef4444;
+}
+
+.theme-light-blue {
+  --bg-color: var(--bg-color-light-blue);
+  --tile-bg: var(--tile-bg-light-blue);
+  --tile-border: var(--tile-border-light-blue);
+  --text-primary: var(--text-primary-light-blue);
+  --text-secondary: var(--text-secondary-light-blue);
+  --theme-accent: var(--accent-blue);
+  --header-bg: var(--header-bg-light-blue);
+  --main-bg: var(--main-bg-light-blue);
+}
+
+.theme-light-green {
+  --bg-color: var(--bg-color-light-green);
+  --tile-bg: var(--tile-bg-light-green);
+  --tile-border: var(--tile-border-light-green);
+  --text-primary: var(--text-primary-light-green);
+  --text-secondary: var(--text-secondary-light-green);
+  --theme-accent: var(--accent-green);
+  --header-bg: var(--header-bg-light-green);
+  --main-bg: var(--main-bg-light-green);
+}
+
+.theme-light-lavender {
+  --bg-color: var(--bg-color-light-lavender);
+  --tile-bg: var(--tile-bg-light-lavender);
+  --tile-border: var(--tile-border-light-lavender);
+  --text-primary: var(--text-primary-light-lavender);
+  --text-secondary: var(--text-secondary-light-lavender);
+  --theme-accent: var(--accent-purple);
+  --header-bg: var(--header-bg-light-lavender);
+  --main-bg: var(--main-bg-light-lavender);
+}
+
+.high-contrast {
+  --bg-color: var(--bg-color-hc);
+  --tile-bg: var(--tile-bg-hc);
+  --tile-border: var(--tile-border-hc);
+  --text-primary: var(--text-primary-hc);
+  --text-secondary: var(--text-secondary-hc);
+  --header-bg: var(--header-bg-hc);
+  --main-bg: var(--main-bg-hc);
+  --theme-accent: var(--accent-blue);
+}
+
+.dashboard {
+  font-family: 'Space Grotesk', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+  overflow: hidden;
+}
+
+.dashboard-container {
+  width: 100%;
+  max-width: 112rem;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.dashboard-content {
+  flex: 1;
+  background: var(--main-bg);
+  border-radius: 0 0 3rem 3rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.swipe-container {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 200%;
+  height: 100%;
+}
+
+.swipe-container.shifted {
+  transform: translateX(-50%);
+}
+
+.page {
+  width: 50%;
+  flex-shrink: 0;
+  padding: 2rem;
+}
+
+.tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2rem;
+  height: 100%;
+}
+
+.glassmorphism {
+  background: var(--tile-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 2rem;
+  border: 1px solid var(--tile-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease-in-out;
+  cursor: pointer;
+}
+
+.glassmorphism:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Animations */
+@keyframes fuel-wave {
+  0% { transform: translateX(-100%) translateY(-10%); }
+  50% { transform: translateX(0%) translateY(0%); }
+  100% { transform: translateX(-100%) translateY(-10%); }
+}
+
+.fuel-wave-animation {
+  animation: fuel-wave 5s ease-in-out infinite;
+}
+
+@keyframes drive {
+  0% { transform: translateX(-200px); }
+  100% { transform: translateX(200px); }
+}
+
+.car-animation {
+  animation: drive 3s linear infinite;
+}
+
+@keyframes arrow-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.arrow-animation {
+  animation: arrow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse-mic {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+  50% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+}
+
+.mic-active {
+  animation: pulse-mic 2s infinite;
+}
+
+@keyframes map-ping {
+  0% { transform: scale(0.5); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.map-ping-animation {
+  animation: map-ping 2s ease-out infinite;
+}
+
+@keyframes call-ring {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  75% { transform: rotate(-15deg); }
+}
+
+.call-ring-animation {
+  animation: call-ring 1s ease-in-out infinite;
+}
+
+@keyframes sos-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+  }
+}
+
+.sos-pulse-animation {
+  animation: sos-pulse 1.5s infinite;
+}
+
+@keyframes youtube-play {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.youtube-play-animation {
+  animation: youtube-play 1s ease-in-out infinite;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .dashboard-container {
+    height: 100vh;
+  }
+  
+  .page {
+    padding: 1rem;
+  }
+  
+  .tiles-grid {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .tiles-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+  }
+}
