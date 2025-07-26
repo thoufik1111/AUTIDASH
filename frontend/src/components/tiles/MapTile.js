@@ -1,6 +1,8 @@
 import React from 'react';
 
 const MapTile = ({ map, onClick }) => {
+  const nearbyPlaces = map?.nearby_places || [];
+  
   return (
     <div className="glassmorphism tile-container map-tile" onClick={onClick}>
       <div className="map-content">
@@ -16,7 +18,7 @@ const MapTile = ({ map, onClick }) => {
         <p className="map-label">Map</p>
         
         <div className="nearby-places">
-          {map.nearbyPlaces.slice(0, 2).map((place, index) => (
+          {nearbyPlaces.slice(0, 2).map((place, index) => (
             <div key={index} className="nearby-place">
               <span className="place-name">{place.name}</span>
               <span className="place-distance">{place.distance}</span>
