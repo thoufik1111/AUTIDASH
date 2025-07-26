@@ -97,7 +97,7 @@ const MapTile = ({ map, onClick }) => {
 
         .map-label {
           font-size: 1.5rem;
-          font-weight: 500;
+          font-weight: 600;
           color: var(--text-primary);
           margin: 0;
         }
@@ -121,13 +121,14 @@ const MapTile = ({ map, onClick }) => {
 
         .place-name {
           font-size: 0.875rem;
-          font-weight: 500;
+          font-weight: 600;
           color: var(--text-primary);
         }
 
         .place-distance {
           font-size: 0.75rem;
           color: var(--text-secondary);
+          font-weight: 500;
         }
 
         @keyframes map-ping {
