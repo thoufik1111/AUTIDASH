@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useVoiceAssistant } from '../hooks/useVoiceAssistant';
-import { mockDashboardData } from '../mock/dashboardData';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 import FuelTile from './tiles/FuelTile';
 import SpeedTile from './tiles/SpeedTile';
 import MusicTile from './tiles/MusicTile';
