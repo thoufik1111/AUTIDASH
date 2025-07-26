@@ -263,3 +263,24 @@
     grid-template-rows: repeat(4, 1fr);
   }
 }
+
+/* Loading State */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  animation: pulse-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-loading {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
