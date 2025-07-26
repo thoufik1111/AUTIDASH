@@ -71,7 +71,7 @@ const MediaTile = ({ media, onClick }) => {
 
         .media-label {
           font-size: 1.5rem;
-          font-weight: 500;
+          font-weight: 600;
           color: var(--text-primary);
           margin: 0;
         }
@@ -95,7 +95,7 @@ const MediaTile = ({ media, onClick }) => {
 
         .source-label {
           font-size: 0.875rem;
-          font-weight: 500;
+          font-weight: 600;
           color: var(--text-secondary);
         }
 
