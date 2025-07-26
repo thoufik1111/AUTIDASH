@@ -82,7 +82,7 @@ const SOSTile = ({ emergency, onClick }) => {
 
         .sos-label {
           font-size: 1.5rem;
-          font-weight: 500;
+          font-weight: 600;
           color: var(--text-primary);
           margin: 0;
         }
@@ -106,8 +106,8 @@ const SOSTile = ({ emergency, onClick }) => {
 
         .contacts-label {
           font-size: 0.875rem;
-          font-weight: 500;
-          color: var(--text-primary);
+          font-weight: 600;
+          color: var(--text-secondary);
         }
 
         .contacts-number {
