@@ -1,7 +1,12 @@
 import React from 'react';
 
 const CallTile = ({ callLog, onClick }) => {
-  const recentCall = callLog?.[0] || { name: "No calls", number: "", time: "", type: "contact" };
+  const recentCall = callLog?.[0] || { 
+    name: "Emergency Services", 
+    number: "911", 
+    time: "10:30 AM", 
+    type: "emergency" 
+  };
 
   return (
     <div className="glassmorphism tile-container call-tile" onClick={onClick}>
@@ -34,7 +39,7 @@ const CallTile = ({ callLog, onClick }) => {
           </div>
           
           <div className="call-count">
-            {callLog?.length || 0} total calls
+            {callLog?.length || 1} total calls
           </div>
         </div>
       </div>
