@@ -68,34 +68,63 @@ const Dashboard = () => {
     }
   }, [transcript, processCommand, dashboardData]);
 
-  const handleVoiceCommand = useCallback((result) => {
+  const handleVoiceCommand = useCallback(async (result) => {
     const { action, command } = result;
+    
+    // Log voice command to backend
+    try {
+      await axios.post(`${API}/dashboard/voice-command`, {
+        command: command,
+        action: action,
+        processed: true
+      });
+    } catch (error) {
+      console.error('Failed to log voice command:', error);
+    }
     
     switch (action) {
       case 'navigation':
         setCurrentPage('alt');
         speak('Opening navigation');
+        try {
+          await axios.put(`${API}/dashboard/map`, { is_navigating: true });
+          await fetchDashboardData();
+        } catch (error) {
+          console.error('Failed to update navigation:', error);
+        }
         break;
         
       case 'music':
         if (command.includes('play')) {
-          setDashboardData(prev => ({
-            ...prev,
-            music: { ...prev.music, isPlaying: true }
-          }));
-          speak('Playing music');
+          try {
+            await axios.put(`${API}/dashboard/music`, { is_playing: true });
+            await fetchDashboardData();
+            speak('Playing music');
+          } catch (error) {
+            console.error('Failed to update music:', error);
+            speak('Playing music');
+          }
         } else if (command.includes('pause') || command.includes('stop')) {
-          setDashboardData(prev => ({
-            ...prev,
-            music: { ...prev.music, isPlaying: false }
-          }));
-          speak('Music paused');
+          try {
+            await axios.put(`${API}/dashboard/music`, { is_playing: false });
+            await fetchDashboardData();
+            speak('Music paused');
+          } catch (error) {
+            console.error('Failed to update music:', error);
+            speak('Music paused');
+          }
         }
         break;
         
       case 'emergency':
         setShowEmergencyOverlay(true);
         speak('Activating emergency mode');
+        try {
+          await axios.put(`${API}/dashboard/emergency`, { is_active: true });
+          await fetchDashboardData();
+        } catch (error) {
+          console.error('Failed to update emergency:', error);
+        }
         break;
         
       case 'fuel':
@@ -114,6 +143,12 @@ const Dashboard = () => {
       case 'media':
         setShowMediaOverlay(true);
         speak('Opening media player');
+        try {
+          await axios.put(`${API}/dashboard/media`, { is_loading: true });
+          await fetchDashboardData();
+        } catch (error) {
+          console.error('Failed to update media:', error);
+        }
         break;
         
       default:
