@@ -253,11 +253,18 @@ const Dashboard = () => {
                   onClick={() => handleTileClick('speed')} 
                 />
                 <MusicTile 
-                  music={dashboardData.music} 
+                  music={{
+                    ...dashboardData.music,
+                    isPlaying: dashboardData.music.is_playing,
+                    albumArt: dashboardData.music.album_art
+                  }} 
                   onClick={() => handleTileClick('music')} 
                 />
                 <ParkingTile 
-                  navigation={dashboardData.navigation} 
+                  navigation={{
+                    ...dashboardData.navigation,
+                    distance: dashboardData.navigation.distance
+                  }} 
                   onClick={() => handleTileClick('parking')} 
                 />
               </div>
