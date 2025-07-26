@@ -27,6 +27,12 @@ const MapTile = ({ map, onClick }) => {
               <span className="place-distance">{place.distance}</span>
             </div>
           ))}
+          {nearbyPlaces.length === 0 && (
+            <div className="nearby-place">
+              <span className="place-name">Searching...</span>
+              <span className="place-distance">nearby</span>
+            </div>
+          )}
         </div>
       </div>
 
