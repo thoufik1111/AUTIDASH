@@ -308,15 +308,38 @@ const Dashboard = () => {
         
         {showEmergencyOverlay && (
           <EmergencyOverlay 
-            emergency={dashboardData.emergency}
-            onClose={() => setShowEmergencyOverlay(false)}
+            emergency={{
+              ...dashboardData.emergency,
+              isActive: dashboardData.emergency.is_active
+            }}
+            onClose={async () => {
+              setShowEmergencyOverlay(false);
+              try {
+                await axios.put(`${API}/dashboard/emergency`, { is_active: false });
+                await fetchDashboardData();
+              } catch (error) {
+                console.error('Failed to deactivate emergency:', error);
+              }
+            }}
           />
         )}
         
         {showMediaOverlay && (
           <MediaOverlay 
-            media={dashboardData.media}
-            onClose={() => setShowMediaOverlay(false)}
+            media={{
+              ...dashboardData.media,
+              currentSource: dashboardData.media.current_source,
+              isLoading: dashboardData.media.is_loading
+            }}
+            onClose={async () => {
+              setShowMediaOverlay(false);
+              try {
+                await axios.put(`${API}/dashboard/media`, { is_loading: false });
+                await fetchDashboardData();
+              } catch (error) {
+                console.error('Failed to update media:', error);
+              }
+            }}
           />
         )}
       </div>
