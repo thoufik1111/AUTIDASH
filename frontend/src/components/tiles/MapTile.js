@@ -1,7 +1,10 @@
 import React from 'react';
 
 const MapTile = ({ map, onClick }) => {
-  const nearbyPlaces = map?.nearby_places || [];
+  const nearbyPlaces = map?.nearby_places || [
+    { name: "Gas Station", distance: "0.5 miles", type: "fuel" },
+    { name: "Parking Garage", distance: "200m", type: "parking" }
+  ];
   
   return (
     <div className="glassmorphism tile-container map-tile" onClick={onClick}>
