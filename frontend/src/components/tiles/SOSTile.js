@@ -1,6 +1,10 @@
 import React from 'react';
 
 const SOSTile = ({ emergency, onClick }) => {
+  const emergencyContacts = emergency?.contacts || [
+    { name: "Emergency Services", number: "911" }
+  ];
+
   return (
     <div className="glassmorphism tile-container sos-tile" onClick={onClick}>
       <div className="sos-content">
@@ -14,14 +18,14 @@ const SOSTile = ({ emergency, onClick }) => {
         
         <div className="emergency-info">
           <div className="emergency-contacts">
-            <span className="contacts-label">Emergency Services</span>
-            <span className="contacts-number">911</span>
+            <span className="contacts-label">{emergencyContacts[0]?.name || "Emergency Services"}</span>
+            <span className="contacts-number">{emergencyContacts[0]?.number || "911"}</span>
           </div>
           
           <div className="status-indicator">
-            <div className={`status-dot ${emergency.isActive ? 'active' : 'inactive'}`}></div>
+            <div className={`status-dot ${emergency?.isActive ? 'active' : 'inactive'}`}></div>
             <span className="status-text">
-              {emergency.isActive ? 'Active' : 'Ready'}
+              {emergency?.isActive ? 'Active' : 'Ready'}
             </span>
           </div>
         </div>
