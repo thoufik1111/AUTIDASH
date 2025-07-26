@@ -1,6 +1,10 @@
 import React from 'react';
 
 const MediaTile = ({ media, onClick }) => {
+  const playlist = media?.playlist || [
+    { title: "Lofi Hip Hop", artist: "ChilledCow", duration: "2:30:00" }
+  ];
+
   return (
     <div className="glassmorphism tile-container media-tile" onClick={onClick}>
       <div className="media-content">
@@ -15,12 +19,12 @@ const MediaTile = ({ media, onClick }) => {
         <div className="media-info">
           <div className="current-source">
             <span className="source-label">Current Source</span>
-            <span className="source-name">{media.currentSource}</span>
+            <span className="source-name">{media?.currentSource || "YouTube Music"}</span>
           </div>
           
           <div className="playlist-info">
-            <span className="playlist-count">{media.playlist.length} playlists</span>
-            {media.isLoading && (
+            <span className="playlist-count">{playlist.length} playlists</span>
+            {media?.isLoading && (
               <div className="loading-indicator">
                 <div className="loading-dot"></div>
                 <span className="loading-text">Loading...</span>
