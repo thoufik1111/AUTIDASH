@@ -107,11 +107,12 @@ const CallTile = ({ callLog, onClick }) => {
           flex-direction: column;
           align-items: flex-start;
           gap: 0.25rem;
+          flex: 1;
         }
 
         .call-name {
           font-size: 0.875rem;
-          font-weight: 500;
+          font-weight: 600;
           color: var(--text-primary);
         }
 
