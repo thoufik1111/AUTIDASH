@@ -164,29 +164,51 @@ const Dashboard = () => {
     }
   };
 
-  const handleTileClick = (tileType) => {
+  const handleTileClick = async (tileType) => {
     switch (tileType) {
       case 'music':
-        setDashboardData(prev => ({
-          ...prev,
-          music: { ...prev.music, isPlaying: !prev.music.isPlaying }
-        }));
-        speak(dashboardData.music.isPlaying ? 'Music paused' : 'Playing music');
+        try {
+          const newPlayingState = !dashboardData.music.is_playing;
+          await axios.put(`${API}/dashboard/music`, { is_playing: newPlayingState });
+          await fetchDashboardData();
+          speak(dashboardData.music.is_playing ? 'Music paused' : 'Playing music');
+        } catch (error) {
+          console.error('Failed to update music:', error);
+          speak(dashboardData.music.is_playing ? 'Music paused' : 'Playing music');
+        }
         break;
         
       case 'map':
         setCurrentPage('alt');
         speak('Opening navigation');
+        try {
+          await axios.put(`${API}/dashboard/map`, { is_navigating: true });
+          await fetchDashboardData();
+        } catch (error) {
+          console.error('Failed to update map:', error);
+        }
         break;
         
       case 'sos':
         setShowEmergencyOverlay(true);
         speak('Emergency activated');
+        try {
+          await axios.put(`${API}/dashboard/emergency`, { is_active: true });
+          await fetchDashboardData();
+        } catch (error) {
+          console.error('Failed to update emergency:', error);
+        }
         break;
         
       case 'media':
         setShowMediaOverlay(true);
         speak('Opening media');
+        try {
+          await axios.put(`${API}/dashboard/media`, { is_loading: true });
+          await fetchDashboardData();
+        } catch (error) {
+          console.error('Failed to update media:', error);
+        }
         break;
         
       case 'call':
