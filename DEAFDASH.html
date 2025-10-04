@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DriveAssist - Accessible Car Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --background-main: #111827;
+            --surface-primary: #1F2937;
+            --primary-text: #F9FAFB;
+            --secondary-text: #9CA3AF;
+            --accent-blue: #3B82F6;
+            --accent-red: #EF4444;
+            --accent-yellow: #F59E0B;
+            --accent-green: #10B981;
+            --glow-red: 0 0 12px rgba(239, 68, 68, 0.7);
+            --glow-yellow: 0 0 12px rgba(245, 158, 11, 0.7);
+            --glow-blue: 0 0 12px rgba(59, 130, 246, 0.7);
+            --bright-nav-text: #00FFD1;
+        }
+        .light-mode {
+            --background-main: #E0E7FF;
+            --surface-primary: #C7D2FE;
+            --primary-text: #1E3A8A;
+            --secondary-text: #4338CA;
+            --accent-blue: #3B82F6;
+            --accent-red: #EF4444;
+            --accent-yellow: #F59E0B;
+            --accent-green: #10B981;
+            --bright-nav-text: #1E3A8A;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-main);
+            color: var(--primary-text);
+            transition: background-color 0.5s, color 0.5s;
+        }
+        .warning-glow {
+            box-shadow: 0 0 15px 2px var(--accent-yellow);
+            animation: pulse-yellow 2s infinite ease-in-out;
+        }
+        .nav-arrow-glow {
+            filter: drop-shadow(var(--glow-blue));
+            animation: pulse-blue 2s infinite ease-in-out;
+        }
+        .low-fuel-alert {
+            box-shadow: var(--glow-red);
+        }
+        .hazard-glow {
+            animation: flash-red 0.7s infinite linear;
+        }
+        .dialogue-enter {
+            animation: fadeInBottom 0.4s ease-out;
+        }
+        #language-menu {
+            display: none;
+        }
+        #language-toggle:checked~#language-menu {
+            display: block;
+        }
+        #chat-interface {
+            display: none;
+        }
+        #chat-toggle:checked~.grid #chat-interface {
+            display: flex;
+        }
+        #chat-toggle:checked~.grid #map-view {
+           display: none;
+        }
+        #sos-toggle:checked~.grid #sos-animation {
+            display: flex;
+        }
+        #sos-animation {
+            display: none;
+        }
+        .ring {
+            border: 4px solid var(--accent-red);
+            border-radius: 50%;
+            animation: ring-pulse 1.5s infinite;
+        }
+        @keyframes pulse-yellow {
+            50% {
+                box-shadow: 0 0 25px 5px var(--accent-yellow);
+            }
+        }
+        @keyframes pulse-blue {
+            50% {
+                filter: drop-shadow(0 0 15px rgba(59, 130, 246, 1));
+            }
+        }
+        @keyframes flash-red {
+            50% {
+                background-color: rgba(239, 68, 68, 0.4);
+            }
+        }
+        @keyframes fadeInBottom {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes ring-pulse {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+    </style>
+<script>
+        const translations = {
+            en: {
+                battery: "Battery",
+                fuelLevel: "Fuel Level",
+                vehicleStatus: "Vehicle Status",
+                doorAjar: "Door Ajar",
+                seatbeltUnfastened: "Seatbelt Unfastened",
+                lowTirePressure: "Low Tire Pressure",
+                quickActions: "Quick Actions",
+                aiChat: "AI Chat",
+                sos: "SOS",
+                mode: "Mode",
+                settings: "Settings",
+                reminders: "Reminders",
+                active: "Active",
+                speedLimit: "Speed Limit: 65 MPH",
+                appointment: "Appointment at 2:00 PM",
+                initiatingEmergencyCall: "Initiating Emergency Call...",
+                chatPlaceholder: "Type or say something...",
+                findParking: "Find parking",
+                checkTirePressure: "Check tire pressure",
+                playMusic: "Play some music",
+                navigation: "In 200 feet, turn left onto Main St.",
+                ambulanceApproaching: "Ambulance<br/>Approaching",
+                blindSpotAlert: "Blind Spot<br/>Alert",
+                incomingVideoCall: "Incoming<br/>Video Call",
+                langEnglish: "English",
+                langTamil: "Tamil",
+                langHindi: "Hindi",
+                chatMsg1: "Where is the nearest charging station?",
+                chatMsg2: "The nearest charging station is at 146 Electric Ave, about 5 miles from your current location.",
+                chatMsg3: "Can you navigate me there?",
+                chatMsg4: "Certainly. Starting navigation now."
+            },
+            ta: {
+                battery: "பேட்டரி",
+                fuelLevel: "எரிபொருள் நிலை",
+                vehicleStatus: "வாகன நிலை",
+                doorAjar: "கதவு திறந்துள்ளது",
+                seatbeltUnfastened: "சீட்பெல்ட் அணியவில்லை",
+                lowTirePressure: "குறைந்த டயர் அழுத்தம்",
+                quickActions: "விரைவான செயல்கள்",
+                aiChat: "AI அரட்டை",
+                sos: "SOS",
+                mode: "முறை",
+                settings: "அமைப்புகள்",
+                reminders: "நினைவூட்டல்கள்",
+                active: "செயலில்",
+                speedLimit: "வேக வரம்பு: 65 MPH",
+                appointment: "மதியம் 2:00 மணிக்கு சந்திப்பு",
+                initiatingEmergencyCall: "அவசர அழைப்பைத் தொடங்குகிறது...",
+                chatPlaceholder: "தட்டச்சு செய்யவும் அல்லது ஏதாவது சொல்லவும்...",
+                findParking: "பார்க்கிங் கண்டுபிடிக்கவும்",
+                checkTirePressure: "டயர் அழுத்தத்தை சரிபார்க்கவும்",
+                playMusic: "இசை இயக்கவும்",
+                navigation: "200 அடியில், பிரதான தெருவில் இடதுபுறம் திரும்பவும்.",
+                ambulanceApproaching: "ஆம்புலன்ஸ்<br/>நெருங்குகிறது",
+                blindSpotAlert: "குருட்டு புள்ளி<br/>எச்சரிக்கை",
+                incomingVideoCall: "உள்வரும்<br/>வீடியோ அழைப்பு",
+                langEnglish: "ஆங்கிலம்",
+                langTamil: "தமிழ்",
+                langHindi: "இந்தி",
+                chatMsg1: "அருகிலுள்ள சார்ஜிங் நிலையம் எங்கே?",
+                chatMsg2: "அருகிலுள்ள சார்ஜிங் நிலையம் 123 எலக்ட்ரிக் அவென்யூவில் உள்ளது, உங்கள் தற்போதைய இடத்திலிருந்து சுமார் 5 மைல் தொலைவில் உள்ளது.",
+                chatMsg3: "என்னை அங்கே வழிநடத்த முடியுமா?",
+                chatMsg4: "நிச்சயமாக. இப்போது வழிசெலுத்தல் தொடங்குகிறது."
+            },
+            hi: {
+                battery: "बैटरी",
+                fuelLevel: "ईंधन स्तर",
+                vehicleStatus: "वाहन की स्थिति",
+                doorAjar: "दरवाजा अधखुला है",
+                seatbeltUnfastened: "सीटबेल्ट नहीं बंधी है",
+                lowTirePressure: "कम टायर दबाव",
+                quickActions: "त्वरित कार्रवाइयां",
+                aiChat: "एआई चैट",
+                sos: "एसओएस",
+                mode: "मोड",
+                settings: "सेटिंग्स",
+                reminders: "अनुस्मारक",
+                active: "सक्रिय",
+                speedLimit: "गति सीमा: 65 मील प्रति घंटा",
+                appointment: "दोपहर 2:00 बजे अपॉइंटमेंट",
+                initiatingEmergencyCall: "आपातकालीन कॉल शुरू हो रही है...",
+                chatPlaceholder: "कुछ टाइप करें या कहें...",
+                findParking: "पार्किंग खोजें",
+                checkTirePressure: "टायर दबाव जांचें",
+                playMusic: "संगीत चलाएं",
+                navigation: "200 फीट में, मेन सेंट पर बाएं मुड़ें।",
+                ambulanceApproaching: "एम्बुलेंस<br/>आ रही है",
+                blindSpotAlert: "ब्लाइंड स्पॉट<br/>अलर्ट",
+                incomingVideoCall: "आने वाली<br/>वीडियो कॉल",
+                langEnglish: "अंग्रेज़ी",
+                langTamil: "तमिल",
+                langHindi: "हिंदी",
+                chatMsg1: "निकटतम चार्जिंग स्टेशन कहाँ है?",
+                chatMsg2: "निकटतम चार्जिंग स्टेशन 123 इलेक्ट्रिक एवेन्यू पर है, जो आपके वर्तमान स्थान से लगभग 5 मील दूर है।",
+                chatMsg3: "क्या आप मुझे वहां ले जा सकते हैं?",
+                chatMsg4: "निश्चित रूप से। अब नेविगेशन शुरू हो रहा है।"
+            }
+        };
+        function switchLanguage(lang) {
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+             document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-translate-placeholder');
+                 if (translations[lang] && translations[lang][key]) {
+                    el.placeholder = translations[lang][key];
+                }
+            });
+            document.documentElement.lang = lang;
+        }
+    </script>
+</head>
+<body class="bg-[var(--background-main)] text-[var(--primary-text)]">
+<input class="hidden" id="theme-toggle" onchange="document.body.classList.toggle('light-mode')" type="checkbox"/>
+<div class="relative h-screen w-full flex flex-col p-6 bg-[var(--background-main)]">
+<input class="hidden" id="chat-toggle" type="checkbox"/>
+<input class="hidden" id="sos-toggle" type="checkbox"/>
+<div class="flex-grow grid grid-cols-5 grid-rows-3 gap-6">
+<div class="col-span-1 row-span-3 bg-[var(--surface-primary)] rounded-2xl p-6 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-4 mb-8">
+<svg class="h-10 w-10 text-[var(--accent-green)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<div>
+<span class="text-3xl font-bold">88%</span>
+<p class="text-sm text-[var(--secondary-text)]" data-translate="battery">Battery</p>
+</div>
+</div>
+<div class="flex items-center gap-4 mb-8">
+<svg class="h-10 w-10 text-[var(--accent-yellow)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<div class="low-fuel-alert p-1 rounded-lg">
+<span class="text-3xl font-bold">15%</span>
+<p class="text-sm text-[var(--secondary-text)]" data-translate="fuelLevel">Fuel Level</p>
+</div>
+</div>
+<div class="flex flex-col gap-y-4">
+<h3 class="text-xl font-semibold text-[var(--secondary-text)] border-b border-[var(--secondary-text)]/20 pb-2" data-translate="vehicleStatus">Vehicle Status</h3>
+<div class="flex items-center gap-3 p-2 rounded-lg bg-[var(--accent-yellow)]/10">
+<svg class="h-6 w-6 text-[var(--accent-yellow)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-base font-medium text-[var(--primary-text)]" data-translate="doorAjar">Door Ajar</span>
+</div>
+<div class="flex items-center gap-3 p-2 rounded-lg bg-[var(--accent-yellow)]/10">
+<svg class="h-6 w-6 text-[var(--accent-yellow)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-base font-medium text-[var(--primary-text)]" data-translate="seatbeltUnfastened">Seatbelt Unfastened</span>
+</div>
+<div class="flex items-center gap-3 p-2 rounded-lg bg-[var(--accent-yellow)]/10 warning-glow">
+<svg class="h-6 w-6 text-[var(--accent-yellow)]" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-5a1 1 0 102 0v-4a1 1 0 10-2 0v4zm1-8a1 1 0 110-2 1 1 0 010 2z" fill-rule="evenodd"></path>
+</svg>
+<span class="text-base font-medium text-[var(--accent-yellow)]" data-translate="lowTirePressure">Low Tire Pressure</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-y-4">
+<h3 class="text-xl font-semibold text-[var(--secondary-text)] border-b border-[var(--secondary-text)]/20 pb-2" data-translate="quickActions">Quick Actions</h3>
+<div class="grid grid-cols-2 gap-4">
+<label class="p-4 bg-[var(--background-main)]/[.5] rounded-xl hover:bg-[var(--background-main)] transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer" for="chat-toggle">
+<svg class="h-8 w-8 text-[var(--primary-text)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.95-1.95A9.863 9.863 0 0112 4c4.97 0 9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-sm" data-translate="aiChat">AI Chat</span>
+</label>
+<label class="p-4 bg-[var(--background-main)]/[.5] rounded-xl hover:bg-[var(--background-main)] transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer" for="sos-toggle">
+<svg class="h-8 w-8 text-[var(--primary-text)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.636 5.636a9 9 0 0112.728 0m-12.728 0a9 9 0 010 12.728" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="text-sm" data-translate="sos">SOS</span>
+</label>
+<label class="p-4 bg-[var(--background-main)]/[.5] rounded-xl hover:bg-[var(--background-main)] transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer" for="theme-toggle">
+<svg class="h-8 w-8 text-[var(--primary-text)]" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<span class="text-sm" data-translate="mode">Mode</span>
+</label>
+<button class="p-4 bg-[var(--background-main)]/[.5] rounded-xl hover:bg-[var(--background-main)] transition-colors flex flex-col items-center justify-center gap-2">
+<svg class="h-8 w-8 text-[var(--primary-text)]" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4zM4 10a2 2 0 100 4h12a2 2 0 100-4H4zM4 17a2 2 0 100 4h12a2 2 0 100-4H4z"></path>
+</svg>
+<span class="text-sm" data-translate="settings">Settings</span>
+</button>
+</div>
+</div>
+</div>
+<div class="col-span-3 row-span-3 flex flex-col gap-6 relative">
+<div class="grid grid-cols-2 gap-6">
+<div class="bg-[var(--surface-primary)] p-4 rounded-2xl border border-[var(--primary-text)]/10 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-semibold text-[var(--secondary-text)]" data-translate="reminders">Reminders</h3>
+<div class="flex items-center gap-2 text-sm text-[var(--secondary-text)]">
+<span data-translate="active">3 Active</span>
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<svg class="h-8 w-8 text-[var(--accent-red)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<p class="text-lg font-bold" data-translate="speedLimit">Speed Limit: 65 MPH</p>
+</div>
+</div>
+<div class="bg-[var(--surface-primary)] p-4 rounded-2xl border border-[var(--primary-text)]/10 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-semibold text-[var(--secondary-text)] opacity-0">Reminders</h3>
+</div>
+<div class="flex items-center gap-4">
+<svg class="h-8 w-8 text-[var(--accent-yellow)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<p class="text-lg font-bold" data-translate="appointment">Appointment at 2:00 PM</p>
+</div>
+</div>
+</div>
+<div class="flex-grow bg-black rounded-2xl bg-cover bg-center relative" id="map-view" style="background-image: url('pic/chennai.jpg');">
+</div>
+<div class="absolute inset-0 bg-black/50 rounded-2xl items-center justify-center z-20" id="sos-animation">
+<div class="relative w-64 h-64 flex items-center justify-center">
+<div class="ring absolute inset-0"></div>
+<div class="ring absolute inset-0" style="animation-delay: 0.5s;"></div>
+<div class="ring absolute inset-0" style="animation-delay: 1s;"></div>
+<div class="bg-[var(--accent-red)] rounded-full p-8">
+<svg class="h-24 w-24 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498A1 1 0 0119 15.72V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<p class="absolute bottom-0 text-white text-xl font-semibold" data-translate="initiatingEmergencyCall">Initiating Emergency Call...</p>
+</div>
+</div>
+<div class="flex-grow bg-[var(--surface-primary)] rounded-2xl flex flex-col p-4 relative" id="chat-interface">
+<div class="absolute top-4 right-4 flex gap-2">
+<button class="p-2 bg-[var(--background-main)]/50 rounded-full hover:bg-[var(--background-main)] transition-colors">
+<svg class="h-6 w-6 text-[var(--primary-text)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4 0 .863-.27 1.664-.742 2.33l-1.12 1.68a1.5 1.5 0 01-2.296 .545l-.42-.28a1.5 1.5 0 00-1.782.165l-.29.29a1.5 1.5 0 01-2.122 0l-3.182-3.182a1.5 1.5 0 010-2.122l.29-.29a1.5 1.5 0 00.165-1.782l-.28-.42a1.5 1.5 0 01.545-2.296L8.228 9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<label class="p-2 bg-[var(--background-main)]/50 rounded-full hover:bg-[var(--background-main)] transition-colors cursor-pointer" for="chat-toggle">
+<svg class="h-6 w-6 text-[var(--primary-text)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</label>
+</div>
+<div class="flex-grow overflow-y-auto pr-2 space-y-4">
+<div class="flex justify-start">
+<div class="bg-[var(--background-main)] rounded-lg p-3 max-w-xs">
+<p class="text-[var(--primary-text)]" data-translate="chatMsg1">Where is the nearest charging station?</p>
+<span class="text-xs text-[var(--secondary-text)] block text-right mt-1">10:31 AM</span>
+</div>
+</div>
+<div class="flex justify-end">
+<div class="bg-[var(--accent-blue)] rounded-lg p-3 max-w-xs relative">
+<p class="text-white" data-translate="chatMsg2">The nearest charging station is at 123 Electric Ave, about 5 miles from your current location.</p>
+<span class="text-xs text-blue-200 block text-right mt-1">10:31 AM</span>
+<div class="absolute -bottom-2 right-2 h-4 w-4 bg-[var(--accent-blue)] animate-ping rounded-full"></div>
+<div class="absolute -bottom-2 right-2 h-4 w-4 bg-[var(--accent-blue)] rounded-full"></div>
+</div>
+</div>
+<div class="flex justify-start">
+<div class="bg-[var(--background-main)] rounded-lg p-3 max-w-xs">
+<p class="text-[var(--primary-text)]" data-translate="chatMsg3">Can you navigate me there?</p>
+<span class="text-xs text-[var(--secondary-text)] block text-right mt-1">10:32 AM</span>
+</div>
+</div>
+<div class="flex justify-end">
+<div class="bg-[var(--accent-blue)] rounded-lg p-3 max-w-xs">
+<p class="text-white" data-translate="chatMsg4">Certainly. Starting navigation now.</p>
+<span class="text-xs text-blue-200 block text-right mt-1">10:32 AM</span>
+</div>
+</div>
+</div>
+<div class="mt-4 flex flex-col gap-2">
+<div class="flex gap-2">
+<button class="bg-[var(--background-main)]/60 hover:bg-[var(--background-main)] text-sm py-2 px-4 rounded-full transition-colors text-[var(--primary-text)]" data-translate="findParking">Find parking</button>
+<button class="bg-[var(--background-main)]/60 hover:bg-[var(--background-main)] text-sm py-2 px-4 rounded-full transition-colors text-[var(--primary-text)]" data-translate="checkTirePressure">Check tire pressure</button>
+<button class="bg-[var(--background-main)]/60 hover:bg-[var(--background-main)] text-sm py-2 px-4 rounded-full transition-colors text-[var(--primary-text)]" data-translate="playMusic">Play some music</button>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<button class="p-3 bg-[var(--background-main)]/50 rounded-full hover:bg-[var(--background-main)] transition-colors">
+<svg class="h-6 w-6 text-[var(--primary-text)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<input class="flex-grow bg-[var(--background-main)]/[.8] border border-[var(--secondary-text)]/50 rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] text-[var(--primary-text)] placeholder-[var(--secondary-text)]" data-translate-placeholder="chatPlaceholder" placeholder="Type or say something..." type="text"/>
+<button class="p-3 bg-[var(--accent-blue)] rounded-full hover:bg-blue-500 transition-colors">
+<svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-[var(--surface-primary)] p-4 rounded-2xl border border-[var(--bright-nav-text)]/50 shadow-[0_0_20px_rgba(0,255,209,0.3)] flex items-center justify-between gap-6 w-full">
+<div class="flex items-center gap-5">
+<svg class="h-16 w-16 text-[var(--bright-nav-text)] nav-arrow-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M14 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+</svg>
+<p class="text-4xl font-bold text-[var(--bright-nav-text)]" data-translate="navigation">Turn left and go 200m to reach the destination</p>
+</div>
+</div>
+</div>
+<div class="col-span-1 row-span-3 bg-[var(--surface-primary)] rounded-2xl p-6 flex flex-col justify-between items-end">
+<div class="text-right">
+<p class="text-5xl font-bold">10:30 AM</p>
+<p class="text-2xl text-[var(--secondary-text)]">24°C / 75°F</p>
+</div>
+<div class="flex flex-col justify-center items-end gap-y-6 w-full">
+<div class="flex items-center gap-4 p-4 rounded-xl hazard-glow w-full justify-end">
+<span class="text-2xl font-bold text-right" data-translate="ambulanceApproaching">Ambulance<br/>Approaching</span>
+<svg class="h-16 w-16 text-[var(--accent-red)]" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M10 2a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 2zM5.105 5.105a.75.75 0 011.06 0l2.475 2.475a.75.75 0 01-1.06 1.06L5.105 6.165a.75.75 0 010-1.06zm9.79 0a.75.75 0 010 1.06l-2.475 2.475a.75.75 0 01-1.06-1.06l2.475-2.475a.75.75 0 011.06 0zM17.25 10a.75.75 0 01-.75.75h-3.5a.75.75 0 010-1.5h3.5a.75.75 0 01.75.75zM10 17.25a.75.75 0 01-.75-.75v-3.5a.75.75 0 011.5 0v3.5a.75.75 0 01-.75.75zM6.165 14.895a.75.75 0 01-1.06 0l-2.475-2.475a.75.75 0 011.06-1.06l2.475 2.475a.75.75 0 010 1.06zm9.79 0a.75.75 0 010-1.06l2.475-2.475a.75.75 0 011.06 1.06l-2.475 2.475a.75.75 0 01-1.06 0zM3.5 10a.75.75 0 01.75-.75h3.5a.75.75 0 010 1.5h-3.5A.75.75 0 013.5 10z" fill-rule="evenodd"></path>
+</svg>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-xl w-full justify-end bg-[var(--accent-red)]/20">
+<span class="text-2xl font-bold text-right" data-translate="blindSpotAlert">Blind Spot<br/>Alert</span>
+<svg class="h-16 w-16 text-[var(--accent-red)]" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" fill-rule="evenodd"></path>
+</svg>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-xl w-full justify-end bg-[var(--accent-blue)]/20">
+<span class="text-2xl font-bold text-right" data-translate="incomingVideoCall">Incoming<br/>Video Call</span>
+<svg class="h-16 w-16 text-[var(--accent-blue)]" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+<path d="M2 3a1 1 0 011-1h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 010 1.414l-1 1a1 1 0 01-1.414 0l-1.586-1.586a1 1 0 00-1.414 0l-1 1A1 1 0 012 8V3zm15.414 1.414a1 1 0 011.414 0l1 1a1 1 0 010 1.414l-1 1a1 1 0 01-1.414 0l-1.586-1.586a1 1 0 00-1.414 0l-1 1a1 1 0 01-1.414-1.414l2.414-2.414A1 1 0 0117.414 4.414zM2 17a1 1 0 011-1h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 010 1.414l-1 1a1 1 0 01-1.414 0l-1.586-1.586a1 1 0 00-1.414 0l-1 1a1 1 0 01-.707.293H3a1 1 0 01-1-1v-5zM15 12a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1h-2a1 1 0 01-1-1v-5z"></path>
+</svg>
+</div>
+</div>
+<div class="relative">
+<input class="hidden" id="language-toggle" type="checkbox"/>
+<label class="p-4 bg-[var(--background-main)]/[.5] rounded-full hover:bg-[var(--background-main)] transition-colors flex items-center justify-center cursor-pointer" for="language-toggle">
+<svg class="h-8 w-8 text-[var(--primary-text)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m0 18a9 9 0 009-9M3 12h18M3 12a9 9 0 009 9m-9-9a9 9 0 019-9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</label>
+<div class="absolute bottom-full right-0 mb-3 w-40 bg-[var(--surface-primary)] border border-[var(--primary-text)]/10 rounded-lg shadow-lg" id="language-menu">
+<a class="block px-4 py-2 text-sm text-[var(--primary-text)] hover:bg-[var(--background-main)] rounded-t-lg cursor-pointer" data-translate="langEnglish" onclick="switchLanguage('en')">English</a>
+<a class="block px-4 py-2 text-sm text-[var(--primary-text)] hover:bg-[var(--background-main)] cursor-pointer" data-translate="langTamil" onclick="switchLanguage('ta')">Tamil</a>
+<a class="block px-4 py-2 text-sm text-[var(--primary-text)] hover:bg-[var(--background-main)] rounded-b-lg cursor-pointer" data-translate="langHindi" onclick="switchLanguage('hi')">Hindi</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>

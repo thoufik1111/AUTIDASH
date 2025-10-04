@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Car Dashboard Monitor</title>
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Alpine JS -->
+  <script defer src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
+
+  <style type="text/tailwindcss">
+    :root {
+      --primary-color: #1e3a8a;
+      --bg-dark: #0d1117;
+      --panel-bg: #161b22;
+      --border-color: #30363d;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --accent-green: #238636;
+      --accent-red: #da3633;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .gauge-circle {
+      stroke-dasharray: 440;
+      stroke-dashoffset: calc(440 - (440 * var(--value)) / 100);
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      transition: stroke-dashoffset 1s ease-in-out;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    input[type="radio"]:checked + label {
+      background-color: var(--primary-color);
+      color: var(--text-primary);
+    }
+    @keyframes glow {
+  0%, 100% { box-shadow: 0 0 10px var(--primary-color); }
+  50% { box-shadow: 0 0 20px var(--primary-color); }
+}
+
+.glow {
+  animation: glow 2s infinite ease-in-out;
+}
+
+  </style>
+</head>
+<body class="bg-[var(--bg-dark)] text-[var(--text-primary)]">
+  <div class="flex h-screen w-full items-center justify-center p-4 @container/dashboard">
+    <div class="grid w-full max-w-7xl h-full grid-cols-12 grid-rows-6 gap-4 relative">
+
+      <!-- Accessibility Dropdown -->
+      <div class="absolute top-4 right-4 z-10" x-data="{ open: false }">
+        <button 
+          class="bg-[var(--panel-bg)] p-3 rounded-full shadow-lg hover:bg-[var(--border-color)] transition-colors"
+          @click="open = !open">
+          <i class="material-icons text-2xl text-[var(--text-primary)]">accessible</i>
+        </button>
+        <div 
+          x-show="open" 
+          @click.away="open = false"
+          class="absolute mt-2 right-0 w-48 bg-[var(--panel-bg)] text-sm text-[var(--text-primary)] rounded-xl shadow-lg border border-[var(--border-color)] z-20 overflow-hidden">
+          <ul class="divide-y divide-[var(--border-color)]">
+            <li class="px-4 py-2 hover:bg-[var(--border-color)] cursor-pointer"><a href="DEAFDASH.html" class="block w-full h-full">Deaf/Dumb</a></li>
+            <li class="px-4 py-2 hover:bg-[var(--border-color)] cursor-pointer"><a href="AUTIDASH.html" class="block w-full h-full">Autistic</a></li>
+            <li class="px-4 py-2 hover:bg-[var(--border-color)] cursor-pointer">Elderly</li>
+            <li class="px-4 py-2 hover:bg-[var(--border-color)] cursor-pointer">Blind</li>
+            <li class="px-4 py-2 hover:bg-[var(--border-color)] cursor-pointer">Mobility Impaired</li>
+            <li class="px-4 py-2 hover:bg-[var(--border-color)] cursor-pointer"><a href="AUTIDASH.html" class="block w-full h-full">Cognitive Disability</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Speed Monitor -->
+<div class="col-span-12 @lg:col-span-4 row-span-2 @lg:row-span-3 flex flex-col items-center justify-center bg-[var(--panel-bg)] rounded-2xl p-6 relative shadow-lg hover:ring-2 hover:ring-[var(--primary-color)] hover:shadow-[0_0_15px_var(--primary-color)] transition-all duration-300">
+        <div class="absolute top-4 left-6 text-lg font-bold">Speed</div>
+        <div class="relative w-56 h-56">
+          <svg class="w-full h-full" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--border-color)" stroke-width="12" />
+            <circle class="gauge-circle" cx="80" cy="80" r="70" fill="none" stroke="var(--primary-color)" stroke-width="12" stroke-linecap="round" style="--value: 45;"></circle>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span class="text-5xl font-bold">65</span>
+            <span class="text-lg text-[var(--text-secondary)]">mph</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Battery Monitor -->
+<div class="col-span-12 @lg:col-span-4 row-span-2 @lg:row-span-3 flex flex-col items-center justify-center bg-[var(--panel-bg)] rounded-2xl p-6 relative shadow-lg hover:ring-2 hover:ring-[var(--primary-color)] hover:shadow-[0_0_15px_var(--primary-color)] transition-all duration-300">
+        <div class="absolute top-4 left-6 text-lg font-bold">Battery</div>
+        <div class="relative w-56 h-56">
+          <svg class="w-full h-full" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="70" fill="none" stroke="var(--border-color)" stroke-width="12" />
+            <circle class="gauge-circle" cx="80" cy="80" r="70" fill="none" stroke="var(--accent-green)" stroke-width="12" stroke-linecap="round" style="--value: 85;"></circle>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span class="text-5xl font-bold">85</span>
+            <span class="text-lg text-[var(--text-secondary)]">%</span>
+          </div>
+        </div>
+      </div>
+
+    <!-- Navigation Panel -->
+<div class="col-span-12 @lg:col-span-4 row-span-6 bg-[var(--panel-bg)] rounded-2xl p-4 flex flex-col shadow-lg hover:ring-2 hover:ring-[var(--primary-color)] hover:shadow-[0_0_15px_var(--primary-color)] transition-all duration-300">
+  <div class="flex justify-between items-center mb-2 px-2">
+    <h3 class="text-lg font-bold">Navigation</h3>
+    <div class="flex items-center gap-2">
+      <i class="material-icons text-xl text-yellow-400">wb_sunny</i>
+      <span class="font-medium">75°F Sunny</span>
+    </div>
+  </div>
+  <div class="flex-1 rounded-lg bg-center bg-cover" style='background-image: url("pic/chennai.jpg");'></div>
+</div>
+
+
+      <!-- Music Controls -->
+<div class="col-span-12 @lg:col-span-8 row-span-1 @lg:row-span-2 bg-[var(--panel-bg)] rounded-2xl p-4 flex items-center justify-between shadow-lg hover:ring-2 hover:ring-[var(--primary-color)] hover:shadow-[0_0_15px_var(--primary-color)] transition-all duration-300">
+        <div class="flex items-center gap-4">
+          <i class="material-icons text-4xl text-[var(--primary-color)]">album</i>
+          <div>
+            <p class="font-bold text-base">Starlight Echo</p>
+            <p class="text-[var(--text-secondary)] text-sm">Cosmic Drive</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 text-xl">
+          <i class="material-icons text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer">skip_previous</i>
+          <i class="material-icons text-3xl hover:text-[var(--text-primary)] cursor-pointer">play_arrow</i>
+          <i class="material-icons text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer">skip_next</i>
+        </div>
+      </div>
+
+      <!-- Call Tab -->
+      <div class="col-span-12 @lg:col-span-4 row-span-2 @lg:row-span-3 bg-[var(--panel-bg)] rounded-2xl p-4 flex flex-col shadow-lg" x-data="{ tab: 'history' }">
+        <div class="flex w-full bg-[var(--border-color)] rounded-full p-1 mb-3">
+          <input type="radio" id="history-tab" name="call-tabs" class="sr-only" value="history" x-model="tab" checked />
+          <label for="history-tab" class="w-1/2 text-center py-1.5 rounded-full cursor-pointer transition-colors text-sm font-medium"
+                 :class="{ 'bg-[var(--primary-color)] text-[var(--text-primary)]': tab === 'history', 'text-[var(--text-secondary)]': tab !== 'history' }">
+            Call History
+          </label>
+          <input type="radio" id="dialpad-tab" name="call-tabs" class="sr-only" value="dialpad" x-model="tab" />
+          <label for="dialpad-tab" class="w-1/2 text-center py-1.5 rounded-full cursor-pointer transition-colors text-sm font-medium"
+                 :class="{ 'bg-[var(--primary-color)] text-[var(--text-primary)]': tab === 'dialpad', 'text-[var(--text-secondary)]': tab !== 'dialpad' }">
+            Dialpad
+          </label>
+        </div>
+        <div class="flex-1 overflow-y-auto">
+          <div x-show="tab === 'history'" class="space-y-2">
+            <div class="flex items-center justify-between p-2 rounded-lg hover:bg-[var(--border-color)] transition-colors">
+              <div>
+                <p class="font-medium">Jane Doe</p>
+                <p class="text-xs text-[var(--text-secondary)]">Yesterday, 5:32 PM</p>
+              </div>
+              <i class="material-icons text-lg text-[var(--accent-green)]">call_received</i>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg hover:bg-[var(--border-color)] transition-colors">
+              <div>
+                <p class="font-medium">John Smith</p>
+                <p class="text-xs text-[var(--text-secondary)]">Yesterday, 2:15 PM</p>
+              </div>
+              <i class="material-icons text-lg text-[var(--accent-red)]">call_missed</i>
+            </div>
+          </div>
+          <div x-show="tab === 'dialpad'" class="grid grid-cols-3 gap-2 text-center">
+            <template x-for="n in ['1','2','3','4','5','6','7','8','9','*','0','#']">
+              <button class="p-2 bg-[var(--border-color)] rounded-lg text-lg font-bold hover:bg-[var(--primary-color)] transition-colors" x-text="n"></button>
+            </template>
+            <div class="col-span-3 mt-1">
+              <button class="w-full p-2 bg-[var(--accent-green)] rounded-lg flex items-center justify-center">
+                <i class="material-icons text-2xl">call</i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="col-span-12 @lg:col-span-4 row-span-1 bg-[var(--panel-bg)] rounded-2xl p-4 flex items-center justify-around shadow-lg">
+        <button class="flex flex-col items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+          <i class="material-icons text-3xl">bluetooth</i>
+          <span class="text-sm font-medium">Bluetooth</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+          <i class="material-icons text-3xl">radio</i>
+          <span class="text-sm font-medium">Radio</span>
+        </button>
+      </div>
+
+      <!-- Climate & Comfort -->
+      <div class="col-span-12 @lg:col-span-8 row-span-1 grid grid-cols-3 gap-4">
+        <div class="bg-[var(--panel-bg)] rounded-2xl p-4 flex flex-col items-center shadow-lg">
+          <i class="material-icons text-3xl text-[var(--primary-color)]">thermostat</i>
+          <p class="text-2xl font-bold mt-1">72°F</p>
+          <p class="text-sm text-[var(--text-secondary)]">Climate</p>
+        </div>
+        <div class="bg-[var(--panel-bg)] rounded-2xl p-4 flex flex-col items-center shadow-lg">
+          <i class="material-icons text-3xl text-[var(--accent-red)]">local_fire_department</i>
+          <p class="text-2xl font-bold mt-1">On</p>
+          <p class="text-sm text-[var(--text-secondary)]">Heated Seats</p>
+        </div>
+        <div class="bg-[var(--panel-bg)] rounded-2xl p-4 flex flex-col items-center shadow-lg">
+          <i class="material-icons text-3xl text-[var(--primary-color)]">ac_unit</i>
+          <p class="text-2xl font-bold mt-1">Auto</p>
+          <p class="text-sm text-[var(--text-secondary)]">Fan</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <script>
+  // Function to update speed and battery dynamically
+  const updateGauges = () => {
+    const speedCircle = document.querySelectorAll(".gauge-circle")[0];
+    const batteryCircle = document.querySelectorAll(".gauge-circle")[1];
+    const speedValue = document.querySelectorAll(".text-5xl")[0];
+    const batteryValue = document.querySelectorAll(".text-5xl")[1];
+
+    const newSpeed = Math.floor(Math.random() * 121);     // Speed: 0–120 mph
+    const newBattery = Math.floor(Math.random() * 101);   // Battery: 0–100%
+
+    // Set CSS variable for animation
+    speedCircle.style.setProperty("--value", newSpeed);
+    batteryCircle.style.setProperty("--value", newBattery);
+
+    // Update the number labels inside the gauge
+    speedValue.textContent = newSpeed;
+    batteryValue.textContent = newBattery;
+  };
+
+  // Update every 2 seconds
+  setInterval(updateGauges, 2000);
+
+  // Initial update
+  updateGauges();
+</script>
+
+
+</body>
+</html> 
